@@ -1,11 +1,10 @@
 # assignment_rpcd_abebual
-Coursera Course: Getting and Cleaning Data Assignment Solutions 
+##Coursera Course: Getting and Cleaning Data Assignment Solutions 
+## Enusre correct directory
 > getwd()
 [1] "C:/Users/zerihunassociates/Documents/Courses/Data Science Specialization/CleaningandPreparingData/run_analysis"
-> ##download the zip file
-> download.file(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile = wearable)
-Error in download.file(url = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip",  : 
-  object 'wearable' not found
+
+##download the zip file from the server 
 > download.file(url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile = "wearable")
 trying URL 'https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip'
 Content type 'application/zip' length 62556944 bytes (59.7 MB)
@@ -45,29 +44,13 @@ downloaded 59.7 MB
 30                      UCI HAR Dataset/train/subject_train.txt    20152 2012-11-29 15:09:00
 31                            UCI HAR Dataset/train/X_train.txt 66006256 2012-11-29 15:25:00
 32                            UCI HAR Dataset/train/y_train.txt    14704 2012-11-29 15:09:00
+
+## load library 
 > library(plyr)
 > library(data.table)
-data.table 1.9.6  For help type ?data.table or https://github.com/Rdatatable/data.table/wiki
-The fastest way to learn (by data.table authors): https://www.datacamp.com/courses/data-analysis-the-data-table-way
 > library(dplyr)
 
-Attaching package: ‘dplyr’
 
-The following objects are masked from ‘package:data.table’:
-
-    between, last
-
-The following objects are masked from ‘package:plyr’:
-
-    arrange, count, desc, failwith, id, mutate, rename, summarise, summarize
-
-The following objects are masked from ‘package:stats’:
-
-    filter, lag
-
-The following objects are masked from ‘package:base’:
-
-    intersect, setdiff, setequal, union
 
 > Test_Y <- read.table(unzip("wearable", "UCI HAR Dataset/test/y_test.txt"))
 > Test_X <- read.table(unzip("wearable", "UCI HAR Dataset/test/X_test.txt"))
@@ -77,60 +60,28 @@ The following objects are masked from ‘package:base’:
 > Train_Subject <- read.table(unzip("wearable", "UCI HAR Dataset/train/subject_train.txt"))
 > Features <- read.table(unzip("wearable", "UCI HAR Dataset/features.txt"))
 > unlink("wearables")
-> ##fix column names
+
+##fix column names
 > colnames(Train_X)<- t(Features[2])
 > colnames(Test_X)<- t(Features[2])
 > Train_X$activities<-Train_Y[, 1]
 > Train_X$participants<-Train_Subject[,1]
 > Test_X$activities<-Test_Y[,1]
 > Test_X$participants<-Test_Subject[,1]
-> ##TASK 1 Merge the training and test datasets 
+
+##TASK 1 Merge the training and test datasets 
 > Merged_Wearables<-rbind(Train_X, Test_X)
 > duplicated(colnames(Merged_Wearables))
-  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [17] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [33] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [49] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [65] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [81] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
- [97] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[113] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[129] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[145] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[161] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[177] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[193] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[209] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[225] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[241] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[257] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[273] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[289] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[305] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
-[321]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[337]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[353] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[369] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[385] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
-[401]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[417]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[433] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[449] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[465] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[481]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[497]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[513] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[529] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[545] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-[561] FALSE FALSE FALSE
 > Merged_Wearables<-Merged_Wearables[, !duplicated(colnames(Merged_Wearables))]
-> ##Task2: Extracts only the measurements on the mean and standard deviation for each measurement
+
+##Task2: Extracts only the measurements on the mean and standard deviation for each measurement
 > Mean_Wearables<-grep("mean()", names(Merged_Wearables), value=FALSE, fixed=TRUE)
 > Mean_Wearables<- append(Mean_Wearables, 471:477)
 > SD_Wearables<-grep("std()", names(Merged_Wearables), value=FALSE)
 > Mean_Wearables<-Merged_Wearables[Mean_Wearables]
 > SD_Wearables<-Merged_Wearables[SD_Wearables]
-> ##Task3: Uses descriptive activity names to name the activities in the data set
+
+##Task3: Uses descriptive activity names to name the activities in the data set
 > Merged_Wearables$activities <- as.character(Merged_Wearables$activities)
 > Merged_Wearables$activities[Merged_Wearables$activities == 1] <- "Walking"
 > Merged_Wearables$activities[Merged_Wearables$activities == 2] <- "Walking Upstairs"
@@ -139,7 +90,8 @@ The following objects are masked from ‘package:base’:
 > Merged_Wearables$activities[Merged_Wearables$activities == 5] <- "Standing"
 > Merged_Wearables$activities[Merged_Wearables$activities == 6] <- "Laying"
 > Merged_Wearables$activities <- as.factor(Merged_Wearables$activities)
-> ##Task 4: Appropriately labels the data set with descriptive variable names.
+
+##Task 4: Appropriately labels the data set with descriptive variable names.
 > names(Merged_Wearables) <- gsub("Acc", "Accelerator", names(Merged_Wearables))
 > names(Merged_Wearables) <- gsub("Mag", "Magnitude", names(Merged_Wearables))
 > names(Merged_Wearables) <- gsub("Gyro", "Gyroscope", names(Merged_Wearables))
@@ -177,9 +129,9 @@ The following objects are masked from ‘package:base’:
 > Merged_Wearables$participants[Merged_Wearables$participants == 29] <- "Participant 29"
 > Merged_Wearables$participants[Merged_Wearables$participants == 30] <- "Participant 30"
 > Merged_Wearables$participants <- as.factor(Merged_Wearables$participants)
-> 
-> 
-> ##Task5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+
+##Task5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 > Merged_Wearables.dt <- data.table(Merged_Wearables)
 > FinalTidyData <- Merged_Wearables.dt[, lapply(.SD, mean), by = 'participants,activities']
 > write.table(FinalTidyData, file = "FinalTidyData.txt", row.names = FALSE)
